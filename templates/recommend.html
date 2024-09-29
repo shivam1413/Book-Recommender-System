@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag for responsiveness -->
+    <title>Book Recommender System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #1c1c1c; /* Darker background for better contrast */
+            font-family: 'Arial', sans-serif; /* Clean font */
+        }
+        .navbar {
+            background-color: #00a65a; /* Elegant green for navbar */
+            padding: 15px 20px; /* Increased padding for the navbar */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+            transition: background-color 0.3s; /* Smooth background transition */
+        }
+        .navbar:hover {
+            background-color: #007a33; /* Darker shade on hover */
+        }
+        .navbar-brand {
+            color: white;
+            font-weight: bold;
+            font-size: 1.8rem; /* Slightly larger brand name */
+            transition: color 0.3s; /* Smooth color transition */
+        }
+        .navbar-brand:hover {
+            color: #ffcc00; /* Change color on hover */
+        }
+        .nav-link {
+            color: white; /* White text for links */
+            font-weight: bold; /* Bold links for emphasis */
+            padding: 10px 15px; /* Spacing around links */
+            transition: color 0.3s, background-color 0.3s; /* Smooth transitions for hover effects */
+            border-radius: 5px; /* Slight rounding for buttons */
+        }
+        .nav-link:hover {
+            color: #ffcc00; /* Gold color on hover */
+            background-color: rgba(255, 255, 255, 0.2); /* Light background on hover */
+        }
+        .nav-item {
+            margin-left: 10px; /* Spacing between nav items */
+        }
+        .text-white {
+            color: white;
+        }
+        .card {
+            background-color: #343a40; /* Dark background for contrast */
+            border: none; /* Remove default card border */
+            border-radius: 15px; /* Rounded corners */
+            transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); /* Shadow effect */
+            margin-bottom: 100px;
+        }
+        .card:hover {
+            transform: translateY(-5px); /* Slight lift on hover */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7); /* Enhanced shadow on hover */
+        }
+        .card img {
+            border-radius: 15px 15px 0 0; /* Rounded top corners for images */
+            height: 250px; /* Fixed height for uniformity */
+            object-fit: cover; /* Ensure image covers the area */
+        }
+        .btn-warning {
+            background-color: #ffc107; /* Button color */
+            border: none; /* Remove border */
+            border-radius: 25px; /* Rounded button */
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+        .btn-warning:hover {
+            background-color: #e0a800; /* Darker button on hover */
+        }
+        .search-input {
+            border-radius: 25px; /* Rounded input */
+            margin-bottom: 20px; /* Space below input */
+            padding: 15px; /* Add padding for comfort */
+        }
+        h1 {
+            margin-bottom: 30px; /* Space below heading */
+            font-weight: bold; /* Bold font */
+            color: #ffcc00; /* Gold color for heading */
+        }
+        footer {
+            background: linear-gradient(135deg, #007a33 0%, #00a65a 100%); /* Gradient background */
+            color: white; /* Footer text color */
+            text-align: center; /* Centered footer text */
+            padding: 40px 0; /* Increased padding for footer */
+            width: 100%; /* Full width */
+            margin-top: auto; /* Push footer to the bottom */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5); /* Shadow above footer */
+        }
+        footer p {
+            margin: 0; /* Remove default margin */
+            font-size: 1.2rem; /* Slightly larger text */
+        }
+        footer a {
+            color: #ffcc00; /* Gold color for links */
+            text-decoration: none; /* Remove underline */
+            font-weight: bold; /* Bold font for links */
+        }
+        footer a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+        .no-recommendation {
+            margin-top: 50px;
+            text-align: center; /* Centered text */
+            color: #ffcc00; /* Gold color for no recommendations message */
+            font-size: 1.5rem; /* Slightly larger font */
+        }
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column; /* Stack navbar items on small screens */
+            }
+            .card {
+                margin-bottom: 30px; /* Adjust spacing on small screens */
+            }
+            h1 {
+                font-size: 1.8rem; /* Adjust heading size */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand text-white">My Book Recommender</a>
+        <ul class="navbar-nav">
+            <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="/recommend">Recommend</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-white">Recommend Books</h1>
+                <form action="/recommend_books" method="post">
+                    <input name="user_input" type="text" class="form-control search-input" placeholder="Enter a book title" required>
+                    <input type="submit" class="btn btn-lg btn-warning" value="Recommend">
+                </form>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            {% if data %}
+                {% for i in data %}
+                <div class="col-md-3 mb-4">
+                    <div class="card">
+                        <img class="card-img-top" src="{{i[2]}}" alt="Book cover image">
+                        <div class="card-body">
+                            <p class="text-white">Book Name: <strong>{{i[0]}}</strong></p>
+                            <h5 class="text-white">By: <strong>{{i[1]}}</strong></h5>
+                            <p class="text-white">Published: <strong>{{i[3]}}</strong></p>  <!-- Year of publication -->
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-md-12 no-recommendation">
+                    <p>No recommendations available. Please enter a valid book title.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer class="footer footer-expand-lg fixed-bottom">
+        <p>&copy; 2024 My Book Recommender. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
